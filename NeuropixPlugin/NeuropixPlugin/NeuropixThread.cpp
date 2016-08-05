@@ -570,10 +570,10 @@ void NeuropixThread::calibrateFromCsv(File directory)
 
     //std::cout << File::getCurrentWorkingDirectory().getFullPathName() << std::endl;
 
-	//ReadCsvErrorCode err = neuropix.neuropix_readComparatorCalibrationFromCsv(comparatorCsv.getFileName().toStdString());
-    //std::cout << "Read comparator calibration error code: " << err << std::endl;
+	ReadCsvErrorCode err = neuropix.neuropix_readComparatorCalibrationFromCsv(comparatorCsv.getFileName().toStdString());
+    std::cout << "Read comparator calibration error code: " << err << std::endl;
     
-	ReadCsvErrorCode err = neuropix.neuropix_readADCOffsetCalibrationFromCsv(offsetCsv.getFileName().toStdString());
+	err = neuropix.neuropix_readADCOffsetCalibrationFromCsv(offsetCsv.getFileName().toStdString());
     std::cout << "Read ADC offset calibration error code: " << err << std::endl;
     
 	err = neuropix.neuropix_readADCSlopeCalibrationFromCsv(slopeCsv.getFileName().toStdString());
