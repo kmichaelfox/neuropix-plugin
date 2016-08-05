@@ -520,7 +520,7 @@ NeuropixInterface::NeuropixInterface(NeuropixThread* t, NeuropixEditor* e) : thr
     infoLabel = new Label("INFO", "INFO");
     infoLabel->setFont(Font("Small Text", 13, Font::plain));
     infoLabel->setBounds(550, 10, 300, 250);
-    infoLabel->setColour(Label::textColourId, Colours::pink);
+    infoLabel->setColour(Label::textColourId, Colours::grey);
     addAndMakeVisible(infoLabel);
 
     lfpGainLabel = new Label("LFP GAIN","LFP GAIN");
@@ -991,6 +991,8 @@ void NeuropixInterface::buttonClicked(Button* button)
 			// fileNameLabel->setText(fileToRead.getFileName(),false);
 			// }
 			thread->calibrateFromCsv(File::getCurrentWorkingDirectory());
+			calibrationButton3->setToggleState(true, dontSendNotification);
+			std::cout << "Done." << std::endl;
 		}
 	}
     

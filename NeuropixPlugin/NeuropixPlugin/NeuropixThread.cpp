@@ -566,7 +566,7 @@ void NeuropixThread::calibrateFromCsv(File directory)
     File comparatorCsv = directory.getChildFile("Comparator_calibration.csv");
     File offsetCsv = directory.getChildFile("Offset_calibration.csv");
     File slopeCsv = directory.getChildFile("Slope_calibration.csv");
-    File gainCsv = directory.getChildFile("Gain_correction.csv");
+    File gainCsv = directory.getChildFile("Gain_calibration.csv");
 
     //std::cout << File::getCurrentWorkingDirectory().getFullPathName() << std::endl;
 
@@ -596,7 +596,8 @@ void NeuropixThread::calibrateFromCsv(File directory)
 
     std::cout << "Reading gain correction data..." << std::endl;
     //Read gain correction from csv and apply to API member
-	neuropix.neuropix_readGainCalibrationFromCsv(gainCsv.getFileName().toStdString());
+	err = neuropix.neuropix_readGainCalibrationFromCsv(gainCsv.getFileName().toStdString());
+	std::cout << "Read gain calibration error code: " << err << std::endl;
 
     //Read gain correction from API member
     neuropix.neuropix_getGainCorrectionCalibration(gainCorrectionData_); 
