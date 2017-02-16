@@ -39,8 +39,8 @@ GenericEditor* NeuropixThread::createEditor(SourceNode* sn)
 NeuropixThread::NeuropixThread(SourceNode* sn) : DataThread(sn), baseStationAvailable(false)
 {
 
-    dataBuffer = new DataBuffer(384, 10000); // start with 768 channels and automatically resize
-	extraDataBuffers.set(0, new DataBuffer(384, 10000));
+	sourceBuffers.add(new DataBuffer(384, 10000));  // AP band buffer
+	sourceBuffers.add(new DataBuffer(384, 10000));  // LFP band buffer
 
     // channel selections:
     // Options 1 & 2 -- fixed 384 channels
@@ -207,8 +207,10 @@ bool NeuropixThread::startAcquisition()
 {
 
     // clear the internal buffer
-    dataBuffer->clear();
-	extraDataBuffers[0]->clear();
+	sourceBuffers[0]->clear();
+	sourceBuffers[1]->clear();
+    //dataBuffer->clear();
+	//extraDataBuffers[0]->clear();
    // dataBuffer2->clear();
 
     // stop data stream
@@ -302,7 +304,7 @@ bool NeuropixThread::stopAcquisition()
     return true;
 }
 
-void NeuropixThread::updateChannels()
+/**void NeuropixThread::updateChannels()
 {
     if (sendLfp)
     {
@@ -315,7 +317,7 @@ void NeuropixThread::updateChannels()
             sn->channels[i]->subProcessorId = 1;
         }
     }
-}
+}*/
 
 void NeuropixThread::toggleApData(bool state)
 {
@@ -328,7 +330,7 @@ void NeuropixThread::toggleLfpData(bool state)
 }
 
 /** Returns the number of continuous headstage channels the data source can provide.*/
-int NeuropixThread::getNumHeadstageOutputs()
+/**int NeuropixThread::getNumHeadstageOutputs()
 {
     int totalChans = 0;
 
@@ -347,19 +349,16 @@ int NeuropixThread::getNumHeadstageOutputs()
     return totalChans; 
 }
 
-/** Returns the number of continuous aux channels the data source can provide.*/
 int NeuropixThread::getNumAuxOutputs()
 {
     return 0;
 }
 
-/** Returns the number of continuous ADC channels the data source can provide.*/
 int NeuropixThread::getNumAdcOutputs()
 {
     return 0;
 }
 
-/** Returns the sample rate of the data source.*/
 float NeuropixThread::getSampleRate()
 {
     return 30000.;
@@ -370,16 +369,58 @@ int NeuropixThread::getNumSampleRates()
     return 2;
 }
 
-/** Returns the volts per bit of the data source.*/
 float NeuropixThread::getBitVolts(Channel* chan)
 {
     return 0.195f;
 }
 
-/** Returns the number of event channels of the data source.*/
 int NeuropixThread::getNumEventChannels()
 {
     return 16;
+} OLD METHODS **/
+
+/** Returns the number of virtual subprocessors this source can generate */
+unsigned int NeuropixThread::getNumSubProcessors()
+{
+	return 2;
+}
+
+/** Returns the number of continuous headstage channels the data source can provide.*/
+int NeuropixThread::getNumDataOutputs(DataChannel::DataChannelTypes type, int subProcessorIdx) const
+{
+	if (type == DataChannel::DataChannelTypes::HEADSTAGE_CHANNEL && subProcessorIdx == 0)
+		return 384;
+	else if (type == DataChannel::DataChannelTypes::HEADSTAGE_CHANNEL && subProcessorIdx == 1)
+		return 384;
+	else
+		return 0;
+}
+
+/** Returns the number of TTL channels that each subprocessor generates*/
+int NeuropixThread::getNumTTLOutputs(int subProcessorIdx) const 
+{
+	if (subProcessorIdx == 0)
+	{
+		return 16;
+	}
+	else {
+		return 0;
+	}
+}
+
+/** Returns the sample rate of the data source.*/
+float NeuropixThread::getSampleRate(int subProcessorIdx) const
+{
+	if (subProcessorIdx == 0)
+		return 30000.0f;
+	else
+		return 2500.0f;
+}
+
+/** Returns the volts per bit of the data source.*/
+float NeuropixThread::getBitVolts(const DataChannel* chan) const
+{
+	return 0.195f;
 }
 
 void NeuropixThread::selectElectrode(int chNum, int connection, bool transmit)
@@ -653,7 +694,7 @@ bool NeuropixThread::updateBuffer()
                     data2[j] = (packet.lfpData[j] - 0.6) / gains[lfpGains[j]] * -1000000.0f; // convert to microvolts
             }
 
-            dataBuffer->addToBuffer(data, &timestampAp, &eventCode, 1);
+            sourceBuffers[0]->addToBuffer(data, &timestampAp, &eventCode, 1);
             timestampAp += 1;
         }
 
@@ -661,7 +702,7 @@ bool NeuropixThread::updateBuffer()
 
 		if (sendLfp)
 		{
-			extraDataBuffers[0]->addToBuffer(data2, &timestampLfp, &eventCode, 1);
+			sourceBuffers[1]->addToBuffer(data2, &timestampLfp, &eventCode, 1);
 			timestampLfp += 1;
 		}
             

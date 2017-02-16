@@ -96,7 +96,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\joshs\Documents\GitHub\plugin-GUI\Source\Plugins\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>\Users\joshs\Documents\GitHub\plugin-GUI\JuceLibraryCode\modules;\Users\joshs\Documents\GitHub\plugin-GUI\JuceLibraryCode;C:\Users\joshs\Documents\GitHub\plugin-GUI\Source\Plugins\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

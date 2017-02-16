@@ -68,26 +68,24 @@ namespace Neuropix {
 	    /** Stops data transfer.*/
 	    bool stopAcquisition();
 
-	    /** Returns the number of continuous headstage channels the data source can provide.*/
-	    int getNumHeadstageOutputs();
+		// DataThread Methods
 
-	    /** Returns the number of continuous aux channels the data source can provide.*/
-		int getNumAuxOutputs();
+		/** Returns the number of virtual subprocessors this source can generate */
+		unsigned int getNumSubProcessors();
 
-	    /** Returns the number of continuous ADC channels the data source can provide.*/
-		int getNumAdcOutputs();
+		/** Returns the number of continuous headstage channels the data source can provide.*/
+		int getNumDataOutputs(DataChannel::DataChannelTypes type, int subProcessorIdx) const;
 
-	    /** Returns the sample rate of the data source.*/
-	    float getSampleRate();
+		/** Returns the number of TTL channels that each subprocessor generates*/
+		int getNumTTLOutputs(int subProcessorIdx) const;
 
-	    /** Determines whether the processor can fill more than one buffer.*/
-	    int getNumSampleRates();
+		/** Returns the sample rate of the data source.*/
+		float getSampleRate(int subProcessorIdx) const;
 
-	    /** Returns the volts per bit of the data source.*/
-	    float getBitVolts(Channel* chan);
+		/** Returns the volts per bit of the data source.*/
+		float getBitVolts(const DataChannel* chan) const;
 
-	    /** Returns the number of event channels of the data source.*/
-		int getNumEventChannels();
+		// Neuropix Methods
 
 		/** Selects which electrode is connected to each channel. */
 		void selectElectrode(int chNum, int connection, bool transmit);
