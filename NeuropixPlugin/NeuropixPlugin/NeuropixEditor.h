@@ -52,9 +52,6 @@ namespace Neuropix {
 	    void comboBoxChanged(ComboBox* comboBox);
 	    void buttonCallback(Button* button);
 
-	    void saveEditorParameters(XmlElement*);
-	    void loadEditorParameters(XmlElement*);
-
 	    Visualizer* createNewCanvas(void);
 
 	private:

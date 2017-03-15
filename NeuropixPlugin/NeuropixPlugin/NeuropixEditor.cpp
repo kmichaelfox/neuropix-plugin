@@ -178,16 +178,6 @@ void NeuropixEditor::buttonCallback(Button* button)
 }
 
 
-void NeuropixEditor::saveEditorParameters(XmlElement* xml)
-{
-
-}
-
-void NeuropixEditor::loadEditorParameters(XmlElement* xml)
-{
-
-}
-
 Visualizer* NeuropixEditor::createNewCanvas(void)
 {
     std::cout << "Button clicked..." << std::endl;
@@ -280,11 +270,13 @@ void NeuropixCanvas::buttonClicked(Button* button)
 
 void NeuropixCanvas::saveVisualizerParameters(XmlElement* xml)
 {
+	std::cout << "Saving visualizer parameters" << std::endl;
     neuropixInterface->saveParameters(xml);
 }
 
 void NeuropixCanvas::loadVisualizerParameters(XmlElement* xml)
 {
+	std::cout << "Loading visualizer parameters" << std::endl;
     neuropixInterface->loadParameters(xml);
 }
 
@@ -1988,35 +1980,19 @@ void NeuropixInterface::saveParameters(XmlElement* xml)
     xmlNode->setAttribute("ZoomHeight", zoomHeight);
     xmlNode->setAttribute("ZoomOffset", zoomOffset);
 
-    String channelStatusValue = "";
-    String channelReferenceValue = "";
-    String channelLfpGainValue = "";
-    String channelApGainValue = "";
-    String channelSelectionStateValue = "";
-    String channelOutputValue = "";
+	xmlNode->setAttribute("apGainValue", apGainComboBox->getText());
+	xmlNode->setAttribute("apGainIndex", apGainComboBox->getSelectedId());
 
-    for (int i = 0; i < 966; i++)
-    {
-        channelStatusValue += String::toHexString(channelStatus[i] + 3);
-        channelReferenceValue += String::toHexString(channelReference[i]);
-        channelLfpGainValue += String::toHexString(channelLfpGain[i]);
-        channelApGainValue += String::toHexString(channelApGain[i]);
-        channelSelectionStateValue += String::toHexString(channelSelectionState[i]);
-        channelOutputValue += String::toHexString(channelOutput[i]);
+	xmlNode->setAttribute("lfpGainValue", lfpGainComboBox->getText());
+	xmlNode->setAttribute("lfpGainIndex", lfpGainComboBox->getSelectedId());
 
-    }
+	xmlNode->setAttribute("referenceChannel", referenceComboBox->getText());
+	xmlNode->setAttribute("referenceChannelIndex", referenceComboBox->getSelectedId());
 
-    xmlNode->setAttribute("channelStatus", channelStatusValue);
-    xmlNode->setAttribute("channelReference", channelReferenceValue);
-    xmlNode->setAttribute("channelLfpGain", channelLfpGainValue);
-    xmlNode->setAttribute("channelApGain", channelApGainValue);
-    xmlNode->setAttribute("channelSelectionState", channelSelectionStateValue);
-    xmlNode->setAttribute("channelOutput", channelOutputValue);
+	xmlNode->setAttribute("filterCut", filterComboBox->getText());
+	xmlNode->setAttribute("filterCutIndex", filterComboBox->getSelectedId());
 
     xmlNode->setAttribute("visualizationMode", visualizationMode);
-
-    // filter cut
-    xmlNode->setAttribute("filterCut", filterComboBox->getSelectedId());
 
     // annotations
     for (int i = 0; i < annotations.size(); i++)
@@ -2033,6 +2009,10 @@ void NeuropixInterface::saveParameters(XmlElement* xml)
 
 void NeuropixInterface::loadParameters(XmlElement* xml)
 {
+	//thread->setAllApGains(3);
+	//thread->setAllLfpGains(2);
+	//thread->setAllReferences(0, 0);
+
     if (0)
     {
         String channelStatusValue;

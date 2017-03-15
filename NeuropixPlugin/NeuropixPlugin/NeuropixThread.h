@@ -95,6 +95,11 @@ namespace Neuropix {
 		/** Selects which reference is used for each channel. */
 		void setReference(int chNum, int refSetting);
 
+		int getReference();
+		int getLfpGain();
+		int getApGain();
+		int getFilter();
+
 		/** Selects which reference is used for each channel. */
 		void setAllReferences(int refSetting, int bankForReference);
 
