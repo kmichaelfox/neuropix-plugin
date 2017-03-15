@@ -60,7 +60,7 @@ namespace Neuropix {
 	    bool foundInputSource();
 
 		/** Returns version info for hardware and API.*/
-		void getInfo(String& hwVersion, String& bsVersion, String& apiVersion, String& asicInfo);
+		void getInfo(String& hwVersion, String& bsVersion, String& apiVersion, String& asicInfo, String& serialNumber);
 
 	    /** Initializes data transfer.*/
 	    bool startAcquisition();

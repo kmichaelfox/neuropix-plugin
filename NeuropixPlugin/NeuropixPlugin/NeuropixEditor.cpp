@@ -37,15 +37,15 @@ NeuropixEditor::NeuropixEditor(GenericProcessor* parentNode, NeuropixThread* t, 
     desiredWidth = 200;
     tabText = "Neuropix";
 
-    optionComboBox = new ComboBox("Option Combo Box");
-    optionComboBox->setBounds(20,35,100,25);
-    optionComboBox->addListener(this);
+    //optionComboBox = new ComboBox("Option Combo Box");
+    //optionComboBox->setBounds(20,35,100,25);
+    //optionComboBox->addListener(this);
 
-    for (int k = 1; k < 5; k++)
-    {
-        optionComboBox->addItem("Option " + String(k),k);
-    }
-    optionComboBox->setSelectedId(option, dontSendNotification);
+    //for (int k = 1; k < 5; k++)
+    //{
+    //    optionComboBox->addItem("Option " + String(k),k);
+    //}
+    //optionComboBox->setSelectedId(option, dontSendNotification);
     //addAndMakeVisible(optionComboBox);
 
     triggerTypeButton = new UtilityButton("INTERNAL", Font("Small Text", 13, Font::plain));
@@ -606,8 +606,9 @@ void NeuropixInterface::updateInfoString()
     String bsVersion;
     String apiVersion;
     String probeType;
+	String serialNumber;
 
-    thread->getInfo(hwVersion, bsVersion, apiVersion, probeType);
+    thread->getInfo(hwVersion, bsVersion, apiVersion, probeType, serialNumber);
     String labelString = "Hardware version: ";
     labelString += hwVersion;
     labelString += "\n\nBasestation version: ";
@@ -615,7 +616,9 @@ void NeuropixInterface::updateInfoString()
     labelString += "\n\nAPI version: ";
     labelString += apiVersion;
     labelString += "\n\nProbe option: ";
-    labelString += option;
+	labelString += probeType; // option
+	labelString += "\n\nProbe S/N: ";
+	labelString += serialNumber;
 
     infoLabel->setText(labelString, dontSendNotification);
 
@@ -1994,6 +1997,8 @@ void NeuropixInterface::saveParameters(XmlElement* xml)
 
     xmlNode->setAttribute("visualizationMode", visualizationMode);
 
+	xmlNode->setAttribute("info", infoLabel->getText());
+
     // annotations
     for (int i = 0; i < annotations.size(); i++)
     {
@@ -2012,6 +2017,46 @@ void NeuropixInterface::loadParameters(XmlElement* xml)
 	//thread->setAllApGains(3);
 	//thread->setAllLfpGains(2);
 	//thread->setAllReferences(0, 0);
+
+	forEachXmlChildElement(*xml, xmlNode)
+	{
+		if (xmlNode->hasTagName("NEUROPIXELS"))
+		{
+			zoomHeight = xmlNode->getIntAttribute("ZoomHeight");
+			zoomOffset = xmlNode->getIntAttribute("ZoomOffset");
+
+			int apGainIndex = xmlNode->getIntAttribute("apGainIndex");
+			if (apGainIndex != apGainComboBox->getSelectedId())
+				apGainComboBox->setSelectedId(apGainIndex, sendNotification);
+
+			int lfpGainIndex = xmlNode->getIntAttribute("lfpGainIndex");
+			if (lfpGainIndex != lfpGainComboBox->getSelectedId())
+				lfpGainComboBox->setSelectedId(lfpGainIndex, sendNotification);
+
+			int referenceChannelIndex = xmlNode->getIntAttribute("referenceChannelIndex");
+			if (referenceChannelIndex != referenceComboBox->getSelectedId())
+				referenceComboBox->setSelectedId(referenceChannelIndex, sendNotification);
+
+			int filterCutIndex = xmlNode->getIntAttribute("filterCutIndex");
+			if (filterCutIndex != filterComboBox->getSelectedId())
+				filterComboBox->setSelectedId(filterCutIndex, sendNotification);
+
+			forEachXmlChildElement(*xmlNode, annotationNode)
+			{
+				if (annotationNode->hasTagName("ANNOTATION"))
+				{
+					Array<int> annotationChannels;
+					annotationChannels.add(annotationNode->getIntAttribute("channel"));
+					annotations.add(Annotation(annotationNode->getStringAttribute("text"),
+						annotationChannels,
+						Colour(annotationNode->getIntAttribute("R"),
+						annotationNode->getIntAttribute("G"),
+						annotationNode->getIntAttribute("B"))));
+				}
+			}
+			
+		}
+	}
 
     if (0)
     {

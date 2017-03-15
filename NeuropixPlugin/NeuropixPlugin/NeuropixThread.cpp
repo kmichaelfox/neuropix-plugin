@@ -171,12 +171,13 @@ bool NeuropixThread::foundInputSource()
     return baseStationAvailable;
 }
 
-void NeuropixThread::getInfo(String& hwVersion, String& bsVersion, String& apiVersion, String& asicInfo)
+void NeuropixThread::getInfo(String& hwVersion, String& bsVersion, String& apiVersion, String& asicInfo, String& serialNumber)
 {
     hwVersion = String(hw_version.major) + "." + String(hw_version.minor);
     bsVersion = String(bs_version) + "." + String(bs_revision);
     apiVersion = String(vn.major) + "." + String(vn.minor);
     asicInfo = String(asicId.probeType);
+	serialNumber = String(asicId.serialNumber);
 }
 
 int NeuropixThread::getProbeOption()
